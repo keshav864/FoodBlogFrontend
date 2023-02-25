@@ -7,12 +7,12 @@
     color: white !important;
 }
 .heroBtn:hover{
-    background-color: black !important;
+    background-color: #212529 !important;
     color: white !important;
     transition: 1s;
 }
 .line{
     background-color: black;
     height: 3px;
-    width: 300px;
+    width: 250px;
 }

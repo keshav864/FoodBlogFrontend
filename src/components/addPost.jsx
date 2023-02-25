@@ -33,20 +33,20 @@ const AddPost = () => {
         headers: {'Content-Type': 'application/json'},
         body:data
     })
-    console.log(await reponse.json());
+    console.log(await response.json());
     }
     return (
         <div className="addPost">
             {/* <Banner image={BannerImage} /> */}
-            <div className="postForm my-5 d-flex justify-content-center">
+            <div className="postForm my-5 d-flex justify-content-center align-items-center">
                 <div className="image mx-4">
                     <img src="/images/pancakes.jpg" className="rounded-2" width="500" height="600" alt="" />
                 </div>
                 <div className="form">
                     <h1 className="text-secondary">ADD POST</h1>
                     <form action="" onSubmit={addPost}> 
-                        <input className="form-control my-4 rounded-0" type="text" placeholder="title of the post" value={title} onChange={(e)=>setTitle(e.target.vlue)} />
-                        <input className="form-control my-4 rounded-0" type="text" placeholder="summary" value={summary} onChange={(e)=>setSummary(e.target.vlue)} />
+                        <input className="form-control my-4 rounded-0" type="text" placeholder="title of the post" value={title} onChange={(e)=>setTitle(e.target.value)} />
+                        <textarea rows="5" cols="" className="form-control my-4 rounded-0" type="text" placeholder="summary" value={summary} onChange={(e)=>setSummary(e.target.value)}></textarea>
                         <input className="form-control my-4 rounded-0" type="file" onChange={(e)=>setFile(e.target.files)} />
                         <ReactQuill value={content} onChange={newValue => setContent(newValue)}  modules={modules} formats={formats} />
                         {/* <textarea className="form-control my-4 rounded-0" placeholder="description for post" name="" id="" cols="30" rows="10"></textarea> */}
