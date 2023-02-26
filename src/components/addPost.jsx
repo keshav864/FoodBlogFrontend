@@ -1,59 +1,95 @@
 import Banner from "./banner";
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import axios from "axios";
 import { useState } from "react";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 const AddPost = () => {
+    const data = "Add Your Post"
+    let [modal, setModal] = useState(0)
+    let [message, setMessage] = useState("")
     let [title, setTitle] = useState("")
     let [summary, setSummary] = useState("")
-    let [file, setFile] = useState("")
-    let [content, setContent] = useState("")
+    let [image, setImage] = useState("")
+    let [author, setAuthor] = useState("")
+    let [location, setLocation] = useState("")
 
-    const modules = {
-        toolbar: [
-            [{ 'header': [1, 2, false] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image'],
-            ['clean']
-        ],
-    }
-    const formats = [
-        'header',
-        'bold', 'italic', 'underline', 'strike', 'blockquote',
-        'list', 'bullet', 'indent',
-        'link', 'image'
-    ]
-    let addPost = async(e) =>{
-        let data = {title,summary,content,file:file[0]}
-        e.preventDefault();
-
-       const response =  await fetch('http://localhost:4000/post',{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body:data
-    })
-    console.log(await response.json());
+    //modal
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    let addPost = (e) => {
+        e.preventDefault()
+        let data = {title,summary,image,location,author}
+        if (title === "" || summary === "" || location === "") {
+            alert("Please fill all the fields")
+        }
+        else {
+            axios.post("http://localhost:4000/add-post", data)
+                .then(res => {
+                    setModal(1)
+                    setMessage(res.data.message)
+                    setShow(true)
+                })
+                .catch(err => {
+                    setMessage(err.data.message)
+                })
+        }
+        console.log();
     }
     return (
         <div className="addPost">
-            {/* <Banner image={BannerImage} /> */}
+            <Banner data={data} />
             <div className="postForm my-5 d-flex justify-content-center align-items-center">
-                <div className="image mx-4">
-                    <img src="/images/pancakes.jpg" className="rounded-2" width="500" height="600" alt="" />
+                <div className="image col-5">
+                    <img src="/images/pancakes.jpg" loading='lazy' className="rounded-2" width="500" height="670" alt="" />
                 </div>
-                <div className="form">
-                    <h1 className="text-secondary">ADD POST</h1>
-                    <form action="" onSubmit={addPost}> 
-                        <input className="form-control my-4 rounded-0" type="text" placeholder="title of the post" value={title} onChange={(e)=>setTitle(e.target.value)} />
-                        <textarea rows="5" cols="" className="form-control my-4 rounded-0" type="text" placeholder="summary" value={summary} onChange={(e)=>setSummary(e.target.value)}></textarea>
-                        <input className="form-control my-4 rounded-0" type="file" onChange={(e)=>setFile(e.target.files)} />
-                        <ReactQuill value={content} onChange={newValue => setContent(newValue)}  modules={modules} formats={formats} />
-                        {/* <textarea className="form-control my-4 rounded-0" placeholder="description for post" name="" id="" cols="30" rows="10"></textarea> */}
-                        <button className="btn orange rounded-2 btn-lg my-4">Submit Post</button>
+                <div className="form col-5">
+                    <h1 className="fw-bolder fs-1">ADD POST</h1>
+                    <div className="line my-3"></div>
+                    <form action="" onSubmit={addPost}>
+                        <div className="author">
+                            <label htmlFor="author">Author</label>
+                            <input type="text" className="form-control my-2 rounded-0" id="author" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} />
+                        </div>
+                        <div className="title">
+                            <label htmlFor="">Title</label>
+                            <input name="title" className="form-control my-2 rounded-0" type="text" placeholder="title of the post" value={title} onChange={(e) => setTitle(e.target.value)} />
+                        </div>
+                        <div className="summary">
+                            <label htmlFor="">Summary</label>
+                            <textarea rows="5" name="summary" className="form-control my-2 rounded-0" type="text" placeholder="summary of the post" value={summary} onChange={(e) => setSummary(e.target.value)} />
+                        </div>
+                        <div className="image">
+                            <label htmlFor="">Image</label>
+                            <input name="image" className="form-control my-2 rounded-0" type="text" placeholder="image of the post" value={image} onChange={(e) => setImage(e.target.value)} />
+                        </div>
+                        <div className="location">
+                            <label htmlFor="">Location</label>
+                            <input name="location" className="form-control my-2 rounded-0" type="text" placeholder="location of the post" value={location} onChange={(e) => setLocation(e.target.value)} />
+                        </div>
+                        <button type='submit' className="btn orange rounded-2 btn-lg my-4">Submit Post</button>
                     </form>
                 </div>
             </div>
+            {modal === 1 ? <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{message}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Your post regarding {title} has been added successfully</Modal.Body>
+                <Modal.Footer>
+                    <Button className='orange border-0' onClick={handleClose}>
+                        OK
+                    </Button>
+                </Modal.Footer>
+            </Modal> : <Modal show={show} onHide={handleClose}>
+                <Modal.Body>{message}</Modal.Body>
+                <Modal.Footer>
+                    <Button className='orange border-0' onClick={handleClose}>
+                        OK
+                    </Button>
+                </Modal.Footer>
+            </Modal>}
         </div>
     );
 }
